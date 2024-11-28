@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Questionnaire{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Personality Questionnaire</h2>
+                <p class="text-center text-muted">Help us find your perfect match by answering these questions</p>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    
+                    {% set current_category = None %}
+                    {% for field in form if field.name != 'csrf_token' and field.name != 'submit' %}
+                        {% set question = questions[loop.index0] %}
+                        
+                        {% if question.category != current_category %}
+                            {% if current_category %}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="category-section mb-4">
+                                <h4 class="category-title mb-3">{{ question.category }}</h4>
+                            
+                            {% set current_category = question.category %}
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            {{ field.label(class="form-control-label") }}
+                            {% if field.errors %}
+                                {% if question.question_type == 'text' %}
+                                    {{ field(class="form-control is-invalid", rows="3") }}
+                                {% else %}
+                                    {{ field(class="form-control is-invalid") }}
+                                {% endif %}
+                                <div class="invalid-feedback">
+                                    {% for error in field.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {% if question.question_type == 'text' %}
+                                    {{ field(class="form-control", rows="3") }}
+                                {% else %}
+                                    {{ field(class="form-control") }}
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% if question.question_type == 'scale' %}
+                                <div class="scale-labels d-flex justify-content-between mt-1">
+                                    <small class="text-muted">Not Important</small>
+                                    <small class="text-muted">Very Important</small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    {% if current_category %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="form-group text-center mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add smooth scrolling between categories
+    document.querySelectorAll('.category-title').forEach(title => {
+        title.addEventListener('click', function() {
+            const section = this.closest('.category-section');
+            section.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+{% endblock %}

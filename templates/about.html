@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 mb-4">About DateMe</h1>
+            <p class="lead">DateMe is a modern dating platform that uses advanced matching algorithms to help you find meaningful connections.</p>
+            
+            <h2 class="h4 mt-5">Our Mission</h2>
+            <p>We believe that finding the right partner should be based on genuine compatibility and shared values. Our platform uses sophisticated matching algorithms to connect people who truly complement each other.</p>
+            
+            <h2 class="h4 mt-4">How It Works</h2>
+            <div class="card-deck mt-3">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-edit fa-3x mb-3 text-primary"></i>
+                                <h5 class="card-title">Create Your Profile</h5>
+                                <p class="card-text">Tell us about yourself, your interests, and what you're looking for in a partner.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-heart fa-3x mb-3 text-primary"></i>
+                                <h5 class="card-title">Get Matched</h5>
+                                <p class="card-text">Our algorithm finds people who share your interests and values.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-comments fa-3x mb-3 text-primary"></i>
+                                <h5 class="card-title">Connect</h5>
+                                <p class="card-text">Start conversations and build meaningful relationships.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="h4 mt-5">Why Choose DateMe?</h2>
+            <ul class="list-unstyled mt-3">
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    <strong>Smart Matching:</strong> Our algorithm considers personality, interests, and values
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    <strong>Safe & Secure:</strong> Your privacy and security are our top priority
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    <strong>Quality Connections:</strong> Focus on meaningful relationships, not just swipes
+                </li>
+                <li class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    <strong>Active Community:</strong> Join thousands of users looking for real connections
+                </li>
+            </ul>
+
+            <div class="text-center mt-5">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Join DateMe Today</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

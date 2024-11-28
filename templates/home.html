@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if current_user.is_authenticated %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="jumbotron text-center">
+                    <h1 class="display-4">Welcome back, {{ current_user.username }}!</h1>
+                    <p class="lead">Here are your top matches for today.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for user, score in matches %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='profile_pics/' + user.profile_photo) }}" 
+                             class="card-img-top" alt="{{ user.username }}'s photo">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user.username }}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">{{ user.location }}</small>
+                            </p>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ score }}%;" 
+                                     aria-valuenow="{{ score }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ "%.1f"|format(score) }}% Match
+                                </div>
+                            </div>
+                            <p class="card-text">{{ user.bio[:100] }}{% if user.bio|length > 100 %}...{% endif %}</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{{ url_for('matches') }}" class="btn btn-primary">
+                                View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if not matches %}
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        <h4 class="alert-heading">Complete Your Profile!</h4>
+                        <p>To find your perfect match, please complete your profile and take our personality questionnaire.</p>
+                        <hr>
+                        <a href="{{ url_for('questionnaire') }}" class="btn btn-primary">
+                            Take Questionnaire
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <div class="row align-items-center" style="min-height: 80vh;">
+            <div class="col-md-6">
+                <h1 class="display-4">Find Your Perfect Match</h1>
+                <p class="lead">Join our community and discover meaningful connections based on compatibility and shared interests.</p>
+                <hr class="my-4">
+                <p>Our sophisticated matching algorithm helps you find people who truly match your personality and preferences.</p>
+                <div class="mt-4">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg mr-3">
+                        Join Now
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='img/couple.svg') }}" 
+                     alt="Dating Illustration" 
+                     class="img-fluid">
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title">Smart Matching</h5>
+                        <p class="card-text">Our algorithm considers multiple factors to find your most compatible matches.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Safe & Secure</h5>
+                        <p class="card-text">Your privacy and security are our top priority. All data is encrypted and protected.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-comments fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Real Connections</h5>
+                        <p class="card-text">Connect with people who share your interests and values.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

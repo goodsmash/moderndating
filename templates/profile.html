@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Your Profile</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4">
+                        <img src="{{ url_for('static', filename='profile_pics/' + current_user.profile_photo) }}" 
+                             alt="Profile Picture" 
+                             class="img-fluid rounded-circle profile-img">
+                    </div>
+                    <div class="col-md-8">
+                        <form method="POST" action="" enctype="multipart/form-data">
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="form-group">
+                                {{ form.birth_date.label(class="form-control-label") }}
+                                {% if form.birth_date.errors %}
+                                    {{ form.birth_date(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.birth_date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.birth_date(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.gender.label(class="form-control-label") }}
+                                {% if form.gender.errors %}
+                                    {{ form.gender(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.gender.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.gender(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.looking_for.label(class="form-control-label") }}
+                                {% if form.looking_for.errors %}
+                                    {{ form.looking_for(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.looking_for.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.looking_for(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.location.label(class="form-control-label") }}
+                                {% if form.location.errors %}
+                                    {{ form.location(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.location.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.location(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.bio.label(class="form-control-label") }}
+                                {% if form.bio.errors %}
+                                    {{ form.bio(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.bio.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.bio(class="form-control", rows="4") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.profile_photo.label(class="form-control-label") }}
+                                {{ form.profile_photo(class="form-control-file") }}
+                                {% if form.profile_photo.errors %}
+                                    {% for error in form.profile_photo.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group text-center">
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Preview uploaded image before form submission
+    document.getElementById('profile_photo').onchange = function(evt) {
+        const [file] = this.files;
+        if (file) {
+            const profileImg = document.querySelector('.profile-img');
+            profileImg.src = URL.createObjectURL(file);
+        }
+    };
+</script>
+{% endblock %}

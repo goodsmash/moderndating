@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Chat with {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='profile_pics/' + other_user.profile_photo) }}" 
+                             alt="{{ other_user.username }}'s photo"
+                             class="rounded-circle mr-2"
+                             style="width: 40px; height: 40px; object-fit: cover;">
+                        <h5 class="mb-0">{{ other_user.username }}</h5>
+                    </div>
+                </div>
+                <div class="card-body chat-body" id="chatBody">
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="message {% if message.sender_id == current_user.id %}message-sent{% else %}message-received{% endif %}">
+                                <div class="message-content">
+                                    {{ message.content }}
+                                    <small class="message-time">
+                                        {{ message.created_at.strftime('%I:%M %p') }}
+                                    </small>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted">
+                                <p>No messages yet. Start the conversation!</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form method="POST" action="" id="messageForm">
+                        {{ form.hidden_tag() }}
+                        <div class="input-group">
+                            {{ form.message(class="form-control", placeholder="Type your message...", autocomplete="off") }}
+                            <div class="input-group-append">
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Scroll to bottom of chat
+    function scrollToBottom() {
+        const chatBody = document.getElementById('chatBody');
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Scroll on page load
+    window.onload = scrollToBottom;
+
+    // Handle form submission
+    document.getElementById('messageForm').onsubmit = function() {
+        setTimeout(scrollToBottom, 50);
+    };
+</script>
+
+<style>
+    .chat-body {
+        height: 400px;
+        overflow-y: auto;
+    }
+
+    .messages {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        max-width: 70%;
+        margin: 5px;
+        padding: 10px;
+        border-radius: 15px;
+    }
+
+    .message-sent {
+        align-self: flex-end;
+        background-color: #007bff;
+        color: white;
+    }
+
+    .message-received {
+        align-self: flex-start;
+        background-color: #e9ecef;
+    }
+
+    .message-content {
+        position: relative;
+    }
+
+    .message-time {
+        display: block;
+        font-size: 0.75rem;
+        margin-top: 5px;
+        opacity: 0.8;
+    }
+
+    .message-sent .message-time {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .message-received .message-time {
+        color: #6c757d;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Matches{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center">Your Matches</h1>
+            <p class="lead text-center text-muted">
+                Discover people who share your interests and values
+            </p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Age Range</label>
+                            <div class="d-flex align-items-center">
+                                <input type="number" class="form-control" placeholder="Min" min="18" max="100">
+                                <span class="mx-2">-</span>
+                                <input type="number" class="form-control" placeholder="Max" min="18" max="100">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" placeholder="Enter city">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Interest</label>
+                            <select class="form-select">
+                                <option selected>All Interests</option>
+                                {% for interest in interests %}
+                                    <option value="{{ interest.id }}">{{ interest.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Sort By</label>
+                            <select class="form-select">
+                                <option value="compatibility" selected>Compatibility</option>
+                                <option value="distance">Distance</option>
+                                <option value="activity">Recently Active</option>
+                            </select>
+                        </div>
+                        <div class="col-12 text-center mt-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matches Grid -->
+    <div class="row matches-container">
+        {% for match in matches %}
+            <div class="col-md-4 mb-4 animate-fade-in">
+                <div class="card profile-card">
+                    <div class="match-percentage">{{ match.compatibility }}% Match</div>
+                    <img src="{{ url_for('static', filename='profile_pics/' + match.profile_photo) }}" 
+                         class="card-img-top" alt="{{ match.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ match.name }}, {{ match.age }}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ match.location }}
+                        </p>
+                        <div class="interests mb-3">
+                            {% for interest in match.interests[:3] %}
+                                <span class="badge bg-light text-dark me-1">{{ interest }}</span>
+                            {% endfor %}
+                            {% if match.interests|length > 3 %}
+                                <span class="badge bg-light text-dark">+{{ match.interests|length - 3 }} more</span>
+                            {% endif %}
+                        </div>
+                        <p class="card-text">{{ match.bio[:100] }}{% if match.bio|length > 100 %}...{% endif %}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button onclick="likeProfile({{ match.id }})" 
+                                    class="btn btn-primary flex-grow-1 me-2" 
+                                    id="like-btn-{{ match.id }}">
+                                <i class="far fa-heart"></i> Like
+                            </button>
+                            <a href="{{ url_for('profile', user_id=match.id) }}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-user"></i> View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="text-center py-4" id="loading-spinner" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Match Modal -->
+<div class="modal fade" id="matchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="fas fa-heart text-danger fa-3x mb-3"></i>
+                <h3>It's a Match!</h3>
+                <p class="lead">You and <span id="matched-user-name"></span> liked each other</p>
+                <div class="matched-users-images d-flex justify-content-center align-items-center mb-4">
+                    <img src="{{ url_for('static', filename='profile_pics/' + current_user.profile_photo) }}" 
+                         class="rounded-circle" width="100" height="100" alt="Your profile">
+                    <i class="fas fa-heart text-danger mx-4"></i>
+                    <img id="matched-user-image" class="rounded-circle" width="100" height="100" alt="Match profile">
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="window.location.href='{{ url_for('messages') }}'">
+                        <i class="fas fa-comment"></i> Send Message
+                    </button>
+                    <button class="btn btn-outline-primary" data-bs-dismiss="modal">
+                        <i class="fas fa-search"></i> Keep Browsing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Show loading spinner when loading more matches
+    function showLoading() {
+        document.getElementById('loading-spinner').style.display = 'block';
+    }
+
+    function hideLoading() {
+        document.getElementById('loading-spinner').style.display = 'none';
+    }
+
+    // Update loadMoreMatches function to show/hide loading spinner
+    const originalLoadMoreMatches = loadMoreMatches;
+    loadMoreMatches = function() {
+        if (loading) return;
+        showLoading();
+        originalLoadMoreMatches().finally(hideLoading);
+    };
+</script>
+{% endblock %}
